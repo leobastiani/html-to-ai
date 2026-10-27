@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HTML to AI</title>
+  <meta name="description" content="Enxuga o HTML de uma página para colar numa IA: remove scripts, estilos, comentários, atributos inúteis e classes sem semântica.">
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f7f7f8;
+      --surface: #ffffff;
+      --text: #1d1d1f;
+      --muted: #6b6b73;
+      --border: #d9d9de;
+      --accent: #2f6fed;
+      --accent-text: #ffffff;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #141416;
+        --surface: #1d1d20;
+        --text: #ececf0;
+        --muted: #9a9aa3;
+        --border: #34343a;
+        --accent: #5b8cff;
+        --accent-text: #0b0b0c;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 16px;
+      background: var(--bg);
+      color: var(--text);
+      font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    header h1 { margin: 0; font-size: 1.25rem; }
+    header p { margin: 4px 0 0; color: var(--muted); }
+    .options { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+    .options label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+    .panes { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; min-height: 60vh; }
+    .pane { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+    .pane-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .pane-header h2 { margin: 0; font-size: 1rem; }
+    .stats { color: var(--muted); font-size: 0.85rem; }
+    textarea {
+      flex: 1;
+      width: 100%;
+      resize: none;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text);
+      font: 13px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace;
+      tab-size: 2;
+    }
+    button {
+      padding: 6px 14px;
+      border: 0;
+      border-radius: 6px;
+      background: var(--accent);
+      color: var(--accent-text);
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:disabled { opacity: 0.5; cursor: default; }
+    @media (max-width: 720px) {
+      .panes { grid-template-columns: 1fr; }
+      textarea { min-height: 40vh; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>HTML to AI</h1>
+    <p>Cole o HTML bruto à esquerda e copie a versão enxuta à direita. Tudo roda no seu navegador, nada é enviado para lugar nenhum.</p>
+  </header>
+
+  <div class="options">
+    <label><input type="checkbox" id="option-unwrap" checked> Remover <code>div</code>/<code>span</code> que só embrulham</label>
+    <label><input type="checkbox" id="option-pretty" checked> Indentar</label>
+  </div>
+
+  <main class="panes">
+    <section class="pane">
+      <div class="pane-header">
+        <h2>HTML bruto</h2>
+        <span class="stats" id="input-stats"></span>
+      </div>
+      <textarea id="input" spellcheck="false" placeholder="Cole aqui o HTML (Copy outerHTML no DevTools, ou copie uma seleção da página)"></textarea>
+    </section>
+    <section class="pane">
+      <div class="pane-header">
+        <h2>HTML para a IA</h2>
+        <span class="stats" id="output-stats"></span>
+        <button type="button" id="copy" disabled>Copiar</button>
+      </div>
+      <textarea id="output" spellcheck="false" readonly></textarea>
+    </section>
+  </main>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
