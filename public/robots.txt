@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://leobastiani.github.io/html-to-ai/sitemap.xml

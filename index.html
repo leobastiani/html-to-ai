@@ -1,128 +1,221 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>HTML to AI</title>
-  <meta name="description" content="Enxuga o HTML de uma página para colar numa IA: remove scripts, estilos, comentários, atributos inúteis e classes sem semântica.">
+  <title>HTML to AI: clean HTML to paste into ChatGPT, Claude and other LLMs</title>
+  <meta name="description" content="Free in-browser tool that strips scripts, styles, comments, useless attributes and meaningless classes from HTML, so you can paste it into an AI with fewer tokens. Optional Markdown output.">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#2f6fed">
+  <link rel="canonical" href="https://leobastiani.github.io/html-to-ai/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="HTML to AI">
+  <meta property="og:title" content="HTML to AI: clean HTML to paste into an LLM">
+  <meta property="og:description" content="Strip scripts, styles and noise from HTML to save tokens before pasting it into an AI. Runs entirely in your browser.">
+  <meta property="og:url" content="https://leobastiani.github.io/html-to-ai/">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="HTML to AI: clean HTML to paste into an LLM">
+  <meta name="twitter:description" content="Strip scripts, styles and noise from HTML to save tokens before pasting it into an AI. Runs entirely in your browser.">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "HTML to AI",
+    "url": "https://leobastiani.github.io/html-to-ai/",
+    "description": "Cleans raw HTML (removes scripts, styles, comments, useless attributes and meaningless classes) and optionally converts it to Markdown, so it can be pasted into an AI with fewer tokens.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any (web browser)",
+    "inLanguage": "en",
+    "isAccessibleForFree": true,
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "sameAs": "https://github.com/leobastiani/html-to-ai"
+  }
+  </script>
   <style>
     :root {
       color-scheme: light dark;
-      --bg: #f7f7f8;
+      --bg: #f5f6f8;
       --surface: #ffffff;
-      --text: #1d1d1f;
-      --muted: #6b6b73;
-      --border: #d9d9de;
+      --text: #181a1f;
+      --muted: #5f6572;
+      --border: #d8dbe2;
       --accent: #2f6fed;
+      --accent-hover: #2458c4;
       --accent-text: #ffffff;
+      --ring: rgba(47, 111, 237, 0.35);
+      --shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 4px 16px rgba(16, 24, 40, 0.04);
     }
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg: #141416;
-        --surface: #1d1d20;
-        --text: #ececf0;
-        --muted: #9a9aa3;
-        --border: #34343a;
+        --bg: #0f1013;
+        --surface: #17181d;
+        --text: #e8e9ee;
+        --muted: #9a9ea9;
+        --border: #2b2d35;
         --accent: #5b8cff;
-        --accent-text: #0b0b0c;
+        --accent-hover: #7aa0ff;
+        --accent-text: #0b0c10;
+        --ring: rgba(91, 140, 255, 0.4);
+        --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
       }
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      padding: 16px;
+      padding: 20px 16px;
       background: var(--bg);
       color: var(--text);
-      font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+      font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 16px;
+      -webkit-font-smoothing: antialiased;
     }
-    header h1 { margin: 0; font-size: 1.25rem; }
-    header p { margin: 4px 0 0; color: var(--muted); }
-    .options { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+    .site-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+    .site-header h1 { margin: 0; font-size: 1.5rem; letter-spacing: -0.02em; }
+    .site-header p { margin: 4px 0 0; color: var(--muted); max-width: 60ch; }
+    .repo-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .repo-link:hover { border-color: var(--accent); color: var(--accent); }
+    .repo-link svg { width: 18px; height: 18px; fill: currentColor; }
+    a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 20px;
+      align-items: center;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
     .options label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
-    .panes { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; min-height: 60vh; }
+    .options input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+    code { padding: 1px 5px; border-radius: 4px; background: var(--bg); font: 0.85em ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .panes { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; min-height: 60vh; }
     .pane { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-    .pane-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .pane-header { display: flex; align-items: center; gap: 12px; min-height: 34px; }
     .pane-header h2 { margin: 0; font-size: 1rem; }
-    .stats { color: var(--muted); font-size: 0.85rem; }
+    .stats { color: var(--muted); font-size: 0.85rem; margin-right: auto; }
     textarea {
       flex: 1;
       width: 100%;
       resize: none;
-      padding: 12px;
+      padding: 14px;
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 12px;
       background: var(--surface);
       color: var(--text);
-      font: 13px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace;
+      box-shadow: var(--shadow);
+      font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
       tab-size: 2;
+      transition: border-color 0.15s, box-shadow 0.15s;
     }
+    textarea::placeholder { color: var(--muted); }
+    textarea:hover { border-color: var(--muted); }
+    textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--ring); }
+    textarea[readonly] { background: var(--bg); }
     button {
-      padding: 6px 14px;
+      padding: 7px 16px;
       border: 0;
-      border-radius: 6px;
+      border-radius: 8px;
       background: var(--accent);
       color: var(--accent-text);
       font: inherit;
       font-weight: 600;
       cursor: pointer;
+      transition: background 0.15s, transform 0.05s;
     }
+    button:hover:not(:disabled) { background: var(--accent-hover); }
+    button:active:not(:disabled) { transform: translateY(1px); }
     select {
       padding: 4px 8px;
       border: 1px solid var(--border);
-      border-radius: 6px;
-      background: var(--surface);
+      border-radius: 8px;
+      background: var(--bg);
       color: var(--text);
       font: inherit;
+      cursor: pointer;
     }
-    button:disabled { opacity: 0.5; cursor: default; }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    .site-footer { color: var(--muted); font-size: 0.85rem; text-align: center; }
+    .site-footer a { color: inherit; }
     @media (max-width: 720px) {
+      body { padding: 14px 16px; }
+      .site-header { flex-direction: column; }
       .panes { grid-template-columns: 1fr; }
       textarea { min-height: 40vh; }
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>HTML to AI</h1>
-    <p>Cole o HTML bruto à esquerda e copie a versão enxuta à direita. Tudo roda no seu navegador, nada é enviado para lugar nenhum.</p>
+  <header class="site-header">
+    <div>
+      <h1>HTML to AI</h1>
+      <p>Paste raw HTML on the left and copy the lean version on the right. Everything runs in your browser, nothing is sent anywhere.</p>
+    </div>
+    <a class="repo-link" href="https://github.com/leobastiani/html-to-ai" rel="noopener">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      <span>GitHub</span>
+    </a>
   </header>
 
-  <div class="options">
-    <label>Formato
+  <section class="options" aria-label="Options">
+    <label>Format
       <select name="format">
         <option value="html">HTML</option>
         <option value="markdown">Markdown</option>
       </select>
     </label>
-    <label><input type="checkbox" name="unwrap" checked> Remover <code>div</code>/<code>span</code>/componentes que só embrulham</label>
-    <label><input type="checkbox" name="removeHidden" checked> Remover ocultos (<code>aria-hidden</code>)</label>
-    <label><input type="checkbox" name="removeClasses"> Remover classes e ids</label>
-    <label><input type="checkbox" name="removeControls"> Remover botões e campos</label>
-    <label><input type="checkbox" name="collapseRepeated"> Encurtar listas (3 de cada)</label>
-    <label><input type="checkbox" name="pretty" checked> Indentar HTML</label>
-  </div>
+    <label><input type="checkbox" name="unwrap" checked> Remove <code>div</code>/<code>span</code>/components that only wrap</label>
+    <label><input type="checkbox" name="removeHidden" checked> Remove hidden (<code>aria-hidden</code>)</label>
+    <label><input type="checkbox" name="removeClasses"> Remove classes and ids</label>
+    <label><input type="checkbox" name="removeControls"> Remove buttons and fields</label>
+    <label><input type="checkbox" name="collapseRepeated"> Shorten lists (3 of each)</label>
+    <label><input type="checkbox" name="pretty" checked> Indent HTML</label>
+  </section>
 
   <main class="panes">
     <section class="pane">
       <div class="pane-header">
-        <h2>HTML bruto</h2>
+        <h2><label for="input">Raw HTML</label></h2>
         <span class="stats" id="input-stats"></span>
       </div>
-      <textarea id="input" spellcheck="false" placeholder="Cole aqui o HTML (Copy outerHTML no DevTools, ou copie uma seleção da página)"></textarea>
+      <textarea id="input" spellcheck="false" placeholder="Paste HTML here (Copy outerHTML in DevTools, or copy a selection of the page)"></textarea>
     </section>
     <section class="pane">
       <div class="pane-header">
-        <h2>Para a IA</h2>
+        <h2><label for="output">For the AI</label></h2>
         <span class="stats" id="output-stats"></span>
-        <button type="button" id="copy" disabled>Copiar</button>
+        <button type="button" id="copy" disabled>Copy</button>
       </div>
       <textarea id="output" spellcheck="false" readonly></textarea>
     </section>
   </main>
+
+  <footer class="site-footer">
+    Free, open source and private: your HTML never leaves your browser.
+    <a href="https://github.com/leobastiani/html-to-ai" rel="noopener">View source on GitHub</a>
+  </footer>
 
   <script type="module" src="src/main.js"></script>
 </body>

@@ -18,8 +18,8 @@ test('turns a messy copied page into lean HTML an AI can read', () => {
       <span class="_3xYz"></span>
       <ul class="product-list col-6">
         <li class="card" data-testid="product" data-id="9f8e7d">
-          <img src="data:image/png;base64,iVBORw0KGgo=" srcset="a.png 2x" alt="Tênis" loading="lazy">
-          <h2 class="card__title">Tênis   azul</h2>
+          <img src="data:image/png;base64,iVBORw0KGgo=" srcset="a.png 2x" alt="Sneakers" loading="lazy">
+          <h2 class="card__title">Sneakers   blue</h2>
           <button type="button" class="btn btn--primary mt-4 kXPqIm" disabled>Comprar</button>
         </li>
       </ul>
@@ -37,8 +37,8 @@ test('turns a messy copied page into lean HTML an AI can read', () => {
 </nav>
 <ul class="product-list col-6">
   <li class="card" data-testid="product">
-    <img src="data:image/png;base64,…" alt="Tênis">
-    <h2 class="card__title">Tênis azul</h2>
+    <img src="data:image/png;base64,…" alt="Sneakers">
+    <h2 class="card__title">Sneakers blue</h2>
     <button type="button" class="btn btn--primary mt-4" disabled>Comprar</button>
   </li>
 </ul>
@@ -46,8 +46,8 @@ test('turns a messy copied page into lean HTML an AI can read', () => {
     spacing</pre>`)
 
   // Compact mode keeps spacing between inline siblings and wrappers when unwrap is off
-  expect(cleanHtml('<div><p>Olá <b>mundo</b>!</p></div>', { unwrap: false, pretty: false }))
-    .toBe('<div><p>Olá <b>mundo</b>!</p></div>')
+  expect(cleanHtml('<div><p>Hello <b>world</b>!</p></div>', { unwrap: false, pretty: false }))
+    .toBe('<div><p>Hello <b>world</b>!</p></div>')
 })
 
 test('slims a component-library table down to its data', () => {
@@ -140,7 +140,7 @@ test('outputs Markdown when the user picks it', () => {
   const html = `
     <html><head><title>Docs</title></head><body>
       <h1 class="css-1x2y3z">Guia</h1>
-      <p>Leia o <a href="/manual">manual</a> com <strong>atenção</strong>.<br>Depois rode <code>pnpm dev</code>.</p>
+      <p>Read the <a href="/manual">manual</a> with <strong>care</strong>.<br>Then run <code>pnpm dev</code>.</p>
       <ul>
         <li>Primeiro</li>
         <li>Segundo <ol><li>sub</li></ol></li>
@@ -160,8 +160,8 @@ test('outputs Markdown when the user picks it', () => {
 
 # Guia
 
-Leia o [manual](/manual) com **atenção**.
-Depois rode \`pnpm dev\`.
+Read the [manual](/manual) with **care**.
+Then run \`pnpm dev\`.
 
 - Primeiro
 - Segundo

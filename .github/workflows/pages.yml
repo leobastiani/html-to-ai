@@ -39,7 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       # Only the static site is published; no build step needed
-      - run: mkdir _site && cp -r index.html src _site/ && rm _site/src/*.test.js
+      - run: mkdir _site && cp -r index.html src _site/ && rm _site/src/*.test.js && cp public/* _site/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
       - id: deployment

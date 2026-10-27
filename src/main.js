@@ -13,7 +13,7 @@ const readOptions = () =>
 // ~4 chars per token is the usual rough estimate for English-ish text and markup
 const describeSize = (text) => {
   const tokens = Math.ceil(text.length / 4)
-  return `${text.length.toLocaleString('pt-BR')} chars · ~${tokens.toLocaleString('pt-BR')} tokens`
+  return `${text.length.toLocaleString('en-US')} chars · ~${tokens.toLocaleString('en-US')} tokens`
 }
 
 const render = () => {
@@ -40,6 +40,6 @@ optionInputs.forEach((option) => option.addEventListener('change', render))
 
 copyButton.addEventListener('click', async () => {
   await navigator.clipboard.writeText(output.value)
-  copyButton.textContent = 'Copiado!'
-  setTimeout(() => { copyButton.textContent = 'Copiar' }, 1500)
+  copyButton.textContent = 'Copied!'
+  setTimeout(() => { copyButton.textContent = 'Copy' }, 1500)
 })
