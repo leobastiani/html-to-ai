@@ -5,9 +5,10 @@ const output = document.querySelector('#output')
 const copyButton = document.querySelector('#copy')
 const inputStats = document.querySelector('#input-stats')
 const outputStats = document.querySelector('#output-stats')
-// Each checkbox `name` is a key of the `cleanHtml` options
-const optionInputs = [...document.querySelectorAll('.options input')]
-const readOptions = () => Object.fromEntries(optionInputs.map((option) => [option.name, option.checked]))
+// Each field `name` is a key of the `cleanHtml` options
+const optionInputs = [...document.querySelectorAll('.options [name]')]
+const readOptions = () =>
+  Object.fromEntries(optionInputs.map((option) => [option.name, option.type === 'checkbox' ? option.checked : option.value]))
 
 // ~4 chars per token is the usual rough estimate for English-ish text and markup
 const describeSize = (text) => {

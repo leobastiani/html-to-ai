@@ -24,6 +24,7 @@ Tudo roda no navegador, nada é enviado para servidor nenhum.
 
 ## Opções
 
+- **Formato**: `HTML` (padrão) ou `Markdown`. O Markdown é gerado a partir do HTML já limpo (respeitando as outras opções): títulos, listas, links, ênfase, `code`/`pre` e tabelas viram Markdown; `div`/`span`/componentes ficam só com o conteúdo; campos de formulário e `svg` continuam como HTML inline. Ver [src/toMarkdown.js](src/toMarkdown.js).
 - **Remover `div`/`span`/componentes que só embrulham** (ligada): `span`, `a` e custom elements (`mat-card`, `fire-search-bar`) sem atributos dão lugar ao conteúdo; `div` sem atributos com um único filho dá lugar ao filho.
 - **Remover ocultos** (ligada): elementos com `aria-hidden="true"` ou `hidden` (ícones, ligaduras como `more_vert`).
 - **Remover classes e ids**: quando só o conteúdo importa.

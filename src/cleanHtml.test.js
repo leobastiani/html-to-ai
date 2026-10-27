@@ -135,3 +135,46 @@ test('slims a component-library table down to its data', () => {
   </tbody>
 </table>`)
 })
+
+test('outputs Markdown when the user picks it', () => {
+  const html = `
+    <html><head><title>Docs</title></head><body>
+      <h1 class="css-1x2y3z">Guia</h1>
+      <p>Leia o <a href="/manual">manual</a> com <strong>atenção</strong>.<br>Depois rode <code>pnpm dev</code>.</p>
+      <ul>
+        <li>Primeiro</li>
+        <li>Segundo <ol><li>sub</li></ol></li>
+      </ul>
+      <table>
+        <tr><th>Rota</th><th>Tempo</th></tr>
+        <tr><td><div>api/a|b</div><div>3 samples</div></td><td>10 ms</td></tr>
+        <tr><td>api/c</td><td><button aria-label="Favoritar"></button></td></tr>
+      </table>
+      <form><input type="search" placeholder="Buscar"></form>
+      <pre>  x = 1
+</pre>
+    </body></html>
+  `
+
+  expect(cleanHtml(html, { format: 'markdown' })).toBe(`# Docs
+
+# Guia
+
+Leia o [manual](/manual) com **atenção**.
+Depois rode \`pnpm dev\`.
+
+- Primeiro
+- Segundo
+  1. sub
+
+| Rota | Tempo |
+| --- | --- |
+| api/a\\|b<br>3 samples | 10 ms |
+| api/c | Favoritar |
+
+<input type="search" placeholder="Buscar">
+
+\`\`\`
+  x = 1
+\`\`\``)
+})

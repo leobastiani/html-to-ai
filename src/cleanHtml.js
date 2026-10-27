@@ -1,4 +1,5 @@
 import { isSemanticName } from './isSemanticName.js'
+import { toMarkdown } from './toMarkdown.js'
 
 const REMOVED_ELEMENTS = 'script, style, noscript, template, link, meta, base, iframe, object, embed, canvas'
 
@@ -219,6 +220,8 @@ export const DEFAULT_OPTIONS = {
   removeControls: false,
   collapseRepeated: false,
   pretty: true,
+  // `html` or `markdown`
+  format: 'html',
 }
 
 export const cleanHtml = (html, overrides = {}) => {
@@ -237,6 +240,8 @@ export const cleanHtml = (html, overrides = {}) => {
   pruneAria(doc.body)
   for (const child of [...doc.body.children]) simplify(child, options)
   if (options.collapseRepeated) collapseRepeated(doc.body)
+
+  if (options.format === 'markdown') return `${title ? `# ${title}\n\n` : ''}${toMarkdown(doc.body)}`.trim()
 
   const body = [...doc.body.childNodes].map((node) => serialize(node, options)).join('')
   const titleLine = title ? serialize(Object.assign(doc.createElement('title'), { textContent: title }), options) : ''

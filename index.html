@@ -70,6 +70,14 @@
       font-weight: 600;
       cursor: pointer;
     }
+    select {
+      padding: 4px 8px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+    }
     button:disabled { opacity: 0.5; cursor: default; }
     @media (max-width: 720px) {
       .panes { grid-template-columns: 1fr; }
@@ -84,12 +92,18 @@
   </header>
 
   <div class="options">
+    <label>Formato
+      <select name="format">
+        <option value="html">HTML</option>
+        <option value="markdown">Markdown</option>
+      </select>
+    </label>
     <label><input type="checkbox" name="unwrap" checked> Remover <code>div</code>/<code>span</code>/componentes que só embrulham</label>
     <label><input type="checkbox" name="removeHidden" checked> Remover ocultos (<code>aria-hidden</code>)</label>
     <label><input type="checkbox" name="removeClasses"> Remover classes e ids</label>
     <label><input type="checkbox" name="removeControls"> Remover botões e campos</label>
     <label><input type="checkbox" name="collapseRepeated"> Encurtar listas (3 de cada)</label>
-    <label><input type="checkbox" name="pretty" checked> Indentar</label>
+    <label><input type="checkbox" name="pretty" checked> Indentar HTML</label>
   </div>
 
   <main class="panes">
@@ -102,7 +116,7 @@
     </section>
     <section class="pane">
       <div class="pane-header">
-        <h2>HTML para a IA</h2>
+        <h2>Para a IA</h2>
         <span class="stats" id="output-stats"></span>
         <button type="button" id="copy" disabled>Copiar</button>
       </div>
