@@ -84,8 +84,12 @@
   </header>
 
   <div class="options">
-    <label><input type="checkbox" id="option-unwrap" checked> Remover <code>div</code>/<code>span</code> que só embrulham</label>
-    <label><input type="checkbox" id="option-pretty" checked> Indentar</label>
+    <label><input type="checkbox" name="unwrap" checked> Remover <code>div</code>/<code>span</code>/componentes que só embrulham</label>
+    <label><input type="checkbox" name="removeHidden" checked> Remover ocultos (<code>aria-hidden</code>)</label>
+    <label><input type="checkbox" name="removeClasses"> Remover classes e ids</label>
+    <label><input type="checkbox" name="removeControls"> Remover botões e campos</label>
+    <label><input type="checkbox" name="collapseRepeated"> Encurtar listas (3 de cada)</label>
+    <label><input type="checkbox" name="pretty" checked> Indentar</label>
   </div>
 
   <main class="panes">

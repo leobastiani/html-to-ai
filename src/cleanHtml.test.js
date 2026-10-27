@@ -49,3 +49,89 @@ test('turns a messy copied page into lean HTML an AI can read', () => {
   expect(cleanHtml('<div><p>Olá <b>mundo</b>!</p></div>', { unwrap: false, pretty: false }))
     .toBe('<div><p>Olá <b>mundo</b>!</p></div>')
 })
+
+test('slims a component-library table down to its data', () => {
+  const row = (path) => `
+    <tr role="row" class="mat-mdc-row cdk-row fire-table-row ng-star-inserted">
+      <td role="cell" class="mat-mdc-cell resource-name-cell ng-star-inserted">
+        <a href="#" class="data-text-wrapper" aria-describedby="cdk-describedby-message-ng-1-180"><span class="ng-star-inserted">api.wellz.com${path}</span></a>
+      </td>
+      <td role="cell" class="mat-mdc-cell metric-value-cell"><a href="#" aria-label="100%"><span>100%</span></a></td>
+      <td role="cell" class="metric-actions-cell">
+        <fireperf-favorite-icons><button aria-label="Favorite ${path}"><mat-icon aria-hidden="true">more_vert</mat-icon></button></fireperf-favorite-icons>
+      </td>
+    </tr>`
+  const html = `
+    <mat-card class="mat-mdc-card ng-star-inserted">
+      <table role="table" class="mat-mdc-table cdk-table fire-table">
+        <thead role="rowgroup"><tr role="row">
+          <th role="columnheader" aria-sort="none"><div role="button" class="mat-sort-header-container"><span>Network request</span></div></th>
+          <th role="columnheader" aria-sort="descending"><div role="button"><span aria-label="Success rate">Success</span></div></th>
+          <th role="columnheader">Actions</th>
+        </tr></thead>
+        <tbody role="rowgroup">${['/a', '/b', '/c', '/d', '/e'].map(row).join('')}</tbody>
+      </table>
+      <mat-select role="combobox" aria-expanded="false" aria-required="false"><span>25</span></mat-select>
+    </mat-card>
+  `
+
+  // Library classes, implicit roles, default aria values and dead references go by default
+  expect(cleanHtml(html)).toContain(`<table class="fire-table">
+  <thead>
+    <tr>
+      <th>
+        <div role="button">Network request</div>
+      </th>
+      <th aria-sort="descending">
+        <div role="button">
+          <span aria-label="Success rate">Success</span>
+        </div>
+      </th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="fire-table-row">
+      <td class="resource-name-cell">
+        <a class="data-text-wrapper">api.wellz.com/a</a>
+      </td>
+      <td class="metric-value-cell">100%</td>
+      <td class="metric-actions-cell">
+        <button aria-label="Favorite /a"></button>
+      </td>
+    </tr>`)
+
+  expect(cleanHtml(html, { removeClasses: true, removeControls: true, collapseRepeated: true })).toBe(`<table>
+  <thead>
+    <tr>
+      <th>
+        <div role="button">Network request</div>
+      </th>
+      <th aria-sort="descending">
+        <div role="button">
+          <span aria-label="Success rate">Success</span>
+        </div>
+      </th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>api.wellz.com/a</td>
+      <td>100%</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>api.wellz.com/b</td>
+      <td>100%</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>api.wellz.com/c</td>
+      <td>100%</td>
+      <td></td>
+    </tr>
+    <!-- 2 more <tr> -->
+  </tbody>
+</table>`)
+})

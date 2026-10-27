@@ -5,8 +5,9 @@ const output = document.querySelector('#output')
 const copyButton = document.querySelector('#copy')
 const inputStats = document.querySelector('#input-stats')
 const outputStats = document.querySelector('#output-stats')
-const unwrapOption = document.querySelector('#option-unwrap')
-const prettyOption = document.querySelector('#option-pretty')
+// Each checkbox `name` is a key of the `cleanHtml` options
+const optionInputs = [...document.querySelectorAll('.options input')]
+const readOptions = () => Object.fromEntries(optionInputs.map((option) => [option.name, option.checked]))
 
 // ~4 chars per token is the usual rough estimate for English-ish text and markup
 const describeSize = (text) => {
@@ -16,7 +17,7 @@ const describeSize = (text) => {
 
 const render = () => {
   const html = input.value
-  output.value = html.trim() ? cleanHtml(html, { unwrap: unwrapOption.checked, pretty: prettyOption.checked }) : ''
+  output.value = html.trim() ? cleanHtml(html, readOptions()) : ''
   inputStats.textContent = html ? describeSize(html) : ''
   const saved = html.length ? Math.round((1 - output.value.length / html.length) * 100) : 0
   outputStats.textContent = output.value ? `${describeSize(output.value)} · −${saved}%` : ''
@@ -34,8 +35,7 @@ input.addEventListener('paste', (event) => {
 })
 
 input.addEventListener('input', render)
-unwrapOption.addEventListener('change', render)
-prettyOption.addEventListener('change', render)
+optionInputs.forEach((option) => option.addEventListener('change', render))
 
 copyButton.addEventListener('click', async () => {
   await navigator.clipboard.writeText(output.value)

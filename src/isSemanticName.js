@@ -3,7 +3,10 @@
 // A name is semantic only if every part of it looks like a word, a small number or a short
 // size token (`h1`, `2xl`, `200px`), so a single hashed part rejects the whole name.
 
-const GENERATED_PREFIX = /^(css|sc|jsx|emotion|svelte|astro|ng-tns|ng-c|ember|chakra|mui-\d)[-_]/i
+// CSS-in-JS hashes plus component-library classes (Angular, Material, MUI, Ant), which describe
+// the library internals rather than what the element is in the page
+const GENERATED_PREFIX = /^(css|sc|jsx|emotion|svelte|astro|ng|mat|mdc|cdk|ant|ember|chakra|mui-\d)[-_]/i
+const LIBRARY_PREFIX = /^Mui[A-Z]/
 const VOWELS = /[aeiouyáàâãéêíóôõúü]/i
 const CONSONANT_RUN = /[^aeiouyáàâãéêíóôõúü\d]{5,}/i
 const WORD = /^([A-Z]?[a-zà-ÿ]+|[A-Z]{2,})$/
@@ -24,7 +27,7 @@ const isWordLike = (part) => {
 }
 
 export const isSemanticName = (name) => {
-  if (GENERATED_PREFIX.test(name)) return false
+  if (GENERATED_PREFIX.test(name) || LIBRARY_PREFIX.test(name)) return false
   const parts = splitParts(name)
   if (parts.length === 0) return false
   if (!parts.every((part) => SMALL_NUMBER.test(part) || SIZE_TOKEN.test(part) || isWordLike(part)))
