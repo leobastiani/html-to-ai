@@ -10,6 +10,31 @@ const optionInputs = [...document.querySelectorAll('.options [name]')]
 const readOptions = () =>
   Object.fromEntries(optionInputs.map((option) => [option.name, option.type === 'checkbox' ? option.checked : option.value]))
 
+const OPTIONS_STORAGE_KEY = 'html-to-ai:options'
+
+// localStorage can throw (blocked site data, private windows), so persistence is best-effort
+const saveOptions = () => {
+  try {
+    localStorage.setItem(OPTIONS_STORAGE_KEY, JSON.stringify(readOptions()))
+  } catch {
+    // Options just won't be remembered
+  }
+}
+
+const restoreOptions = () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(OPTIONS_STORAGE_KEY))
+    if (!saved) return
+    optionInputs.forEach((option) => {
+      if (!(option.name in saved)) return
+      if (option.type === 'checkbox') option.checked = saved[option.name] === true
+      else option.value = saved[option.name]
+    })
+  } catch {
+    // Corrupted or unavailable storage: keep the defaults from the HTML
+  }
+}
+
 // ~4 chars per token is the usual rough estimate for English-ish text and markup
 const describeSize = (text) => {
   const tokens = Math.ceil(text.length / 4)
@@ -36,7 +61,15 @@ input.addEventListener('paste', (event) => {
 })
 
 input.addEventListener('input', render)
-optionInputs.forEach((option) => option.addEventListener('change', render))
+optionInputs.forEach((option) =>
+  option.addEventListener('change', () => {
+    saveOptions()
+    render()
+  }),
+)
+
+restoreOptions()
+render()
 
 copyButton.addEventListener('click', async () => {
   await navigator.clipboard.writeText(output.value)
